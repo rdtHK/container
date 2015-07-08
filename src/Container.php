@@ -38,7 +38,7 @@ class Container
      * @param string $name     Name associated with the resource.
      * @param mixed  $resource Callback or resource to be stored.
      *
-     * @return \Rdthk\DependencyInjection\Container A reference to the container.
+     * @return \Rdthk\DependencyInjection\Container The container.
      */
     public function add($name, $resource)
     {
@@ -58,6 +58,8 @@ class Container
         } else {
             $this->_values[$name] = $resource;
         }
+
+        return $this;
     }
 
     /**

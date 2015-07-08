@@ -97,6 +97,18 @@ class ContainerTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Ensures that Container::add returns
+     * $this.
+     */
+    public function testAddReturnsThis()
+    {
+        $container = new Container();
+        $y = $container->add('foo', 'bar');
+
+        $this->assertSame($container, $y);
+    }
+
+    /**
      * Ensures the container will throw an
      * exception when the user tries to
      * define a non string key.
