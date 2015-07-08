@@ -65,10 +65,10 @@ class ContainerTest extends PHPUnit_Framework_TestCase
     /**
      * Ensures the container will throw an
      * exception when asked for an undefined
-     * key.
+     * resource.
      *
      * @expectedException        \InvalidArgumentException
-     * @expectedExceptionMessage 'foo' was not added.
+     * @expectedExceptionMessage Undeclared resource 'foo'.
      */
     public function testAskingForUndefinedItem()
     {
@@ -79,10 +79,10 @@ class ContainerTest extends PHPUnit_Framework_TestCase
     /**
      * Ensures the container will throw an
      * exception when the user tries to insert
-     * two values with the same key.
+     * two values with the same name.
      *
      * @expectedException        \InvalidArgumentException
-     * @expectedExceptionMessage 'foo' is already present.
+     * @expectedExceptionMessage Resource 'foo' is already present.
      */
     public function testAddingRepeatedItems()
     {
@@ -102,7 +102,7 @@ class ContainerTest extends PHPUnit_Framework_TestCase
      * define a non string key.
      *
      * @expectedException        \InvalidArgumentException
-     * @expectedExceptionMessage 'integer' is not a valid key type.
+     * @expectedExceptionMessage  Resource names can only be strings. 'integer' provided.
      */
     public function testAddingInvalidKeyType()
     {

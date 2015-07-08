@@ -28,56 +28,56 @@ class Container
     private $_values = [];
 
     /**
-     * Adds a new value to the container.
+     * Stores a new resource in the container.
      *
-     * If a callable was passed as the $value parameter,
+     * If a callable was passed as the $resource parameter,
      * when this element is first retrieved, it will be
-     * called with the container as a parameter and the
-     * return value cached.
+     * called with the container as a parameter and its
+     * return value will be cached.
      *
-     * @param string $key   Name associated with the value.
-     * @param mixed  $value Callback or value to be stored.
+     * @param string $name     Name associated with the resource.
+     * @param mixed  $resource Callback or resource to be stored.
      *
      * @return void
      */
-    public function add($key, $value)
+    public function add($name, $resource)
     {
-        if (isset($this->_builders[$key]) || isset($this->_values[$key])) {
-            throw new \InvalidArgumentException("Key '$key' is already present.");
+        if (isset($this->_builders[$name]) || isset($this->_values[$name])) {
+            throw new \InvalidArgumentException("Resource '$name' is already present.");
         }
 
-        if (!is_string($key)) {
-            $keyType = gettype($key);
+        if (!is_string($name)) {
+            $keyType = gettype($name);
             throw new \InvalidArgumentException(
-                "'$keyType' is not a valid key type."
+                "Resource names can only be strings. '$keyType' provided."
             );
         }
 
-        if (is_callable($value)) {
-            $this->_builders[$key] = $value;
+        if (is_callable($resource)) {
+            $this->_builders[$name] = $resource;
         }
 
-        $this->_values[$key] = $value;
+        $this->_values[$name] = $resource;
     }
 
     /**
-     * Returns the value associated with the supplied key.
+     * Returns the resource associated with the supplied name.
      *
-     * @param string $key Name associated with the value.
+     * @param string $name Name associated with the resource.
      *
      * @return mixed
      */
-    public function get($key)
+    public function get($name)
     {
-        if (!empty($this->_builders[$key])) {
-            $this->_values[$key] = $this->_builders[$key]($this);
-            unset($this->_builders[$key]);
+        if (!empty($this->_builders[$name])) {
+            $this->_values[$name] = $this->_builders[$name]($this);
+            unset($this->_builders[$name]);
         }
 
-        if (empty($this->_values[$key])) {
-            throw new \InvalidArgumentException("Key '$key' was not added.");
+        if (empty($this->_values[$name])) {
+            throw new \InvalidArgumentException("Undeclared resource '$name'.");
         }
 
-        return $this->_values[$key];
+        return $this->_values[$name];
     }
 }
