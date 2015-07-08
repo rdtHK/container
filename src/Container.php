@@ -38,7 +38,7 @@ class Container
      * @param string $name     Name associated with the resource.
      * @param mixed  $resource Callback or resource to be stored.
      *
-     * @return void
+     * @return \Rdthk\DependencyInjection\Container A reference to the container.
      */
     public function add($name, $resource)
     {
@@ -55,9 +55,9 @@ class Container
 
         if (is_callable($resource)) {
             $this->_builders[$name] = $resource;
+        } else {
+            $this->_values[$name] = $resource;
         }
-
-        $this->_values[$name] = $resource;
     }
 
     /**
@@ -70,7 +70,7 @@ class Container
     public function get($name)
     {
         if (!empty($this->_builders[$name])) {
-            $this->_values[$name] = $this->_builders[$name]($this);
+            $this->_values[$name] = call_user_func($this->_builders[$name], $this);
             unset($this->_builders[$name]);
         }
 
