@@ -3,6 +3,9 @@
         "phpunit/phpunit": "^4.7"
     },
     "autoload": {
-        "psr-4": {"Rdthk\\DependencyInjection\\": "src/"}
+        "psr-4": {
+            "Rdthk\\DependencyInjection\\": "src/",
+            "Rdthk\\DependencyInjection\\Tests\\": "tests/"
+        }
     }
 }
