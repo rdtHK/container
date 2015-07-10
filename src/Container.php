@@ -82,4 +82,46 @@ class Container
 
         return $this->_values[$name];
     }
+
+    public function addClass($class, $definition)
+    {
+        $this->_builders[$class] = function ($container) use ($class, $definition) {
+            $reflectionClass = new \ReflectionClass($class);
+            $args = [];
+
+            if (isset($definition['__construct'])) {
+                $args = Container::buildDependencies(
+                        $container,
+                        $definition['__construct']
+                );
+            }
+
+            $object = $reflectionClass->newInstanceArgs($args);
+
+            foreach ($definition as $method => $dependencies) {
+
+                if ($method === '__construct') {
+                    continue;
+                }
+
+                $args = Container::buildDependencies($container, $dependencies);
+                $reflectionMethod = $reflectionClass->getMethod($method);
+                $reflectionMethod->invokeArgs($object, $args);
+            }
+            
+            return $object;
+        };
+    }
+
+    private static function buildDependencies($container, $dependencies)
+    {
+        $args = [];
+
+        foreach ($dependencies as $dep) {
+            $args[] = $container->get($dep);
+        }
+
+        return $args;
+    }
+
 }
