@@ -83,6 +83,16 @@ class Container
         return $this->_values[$name];
     }
 
+    /**
+     * Constructs a builder for the supplied class.
+     * The method receives a class name and an array in the form
+     * ['methodName' => ['list', 'of', 'dependencies']]
+     * 
+     * generates a builder function and adds it to the container.
+     * 
+     * @param string $class Name associated with the resource.
+     * @param array  $definition List of methods to be calld and its parameters.
+     */
     public function addClass($class, $definition)
     {
         $this->_builders[$class] = function ($container) use ($class, $definition) {
@@ -113,6 +123,13 @@ class Container
         };
     }
 
+    /**
+     * 
+     * @param \Rdthk\DependencyInjection\Container $container
+     * @param string[] $dependencies A list of dependency names to be retrieved.
+     * 
+     * @return array
+     */
     private static function buildDependencies($container, $dependencies)
     {
         $args = [];
