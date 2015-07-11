@@ -123,6 +123,8 @@ class Container
         };
 
         $this->add($class, $builder);
+
+        return $this;
     }
 
     /**
