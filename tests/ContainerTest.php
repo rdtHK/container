@@ -63,7 +63,9 @@ class ContainerTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     *
+     * Ensures that the Container::addClass
+     * correctly builds the object with 
+     * the declared dependencies.
      */
     public function testClassBuilding()
     {
