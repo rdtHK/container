@@ -95,7 +95,7 @@ class Container
      */
     public function addClass($class, $definition)
     {
-        $this->_builders[$class] = function ($container) use ($class, $definition) {
+        $builder = function ($container) use ($class, $definition) {
             $reflectionClass = new \ReflectionClass($class);
             $args = [];
 
@@ -121,6 +121,8 @@ class Container
             
             return $object;
         };
+
+        $this->add($class, $builder);
     }
 
     /**
