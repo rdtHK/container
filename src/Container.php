@@ -24,6 +24,7 @@ namespace Rdthk\DependencyInjection;
  */
 class Container
 {
+
     private $_builders = [];
     private $_values = [];
 
@@ -32,8 +33,8 @@ class Container
      *
      * If a callable was passed as the $resource parameter,
      * when this element is first retrieved, it will be
-     * called with the container as a parameter and its
-     * return value will be cached.
+     * stored as a builder and called and its return value cached when
+     * the resource is first retrieved.
      *
      * @param string $name     Name associated with the resource.
      * @param mixed  $resource Callback or resource to be stored.
@@ -42,23 +43,47 @@ class Container
      */
     public function add($name, $resource)
     {
-        if (isset($this->_builders[$name]) || isset($this->_values[$name])) {
-            throw new \InvalidArgumentException("Resource '$name' is already present.");
+        if (is_callable($resource)) {
+            $this->addBuilder($name, $resource);
+        } else {
+            $this->addValue($name, $resource);
         }
 
-        if (!is_string($name)) {
-            $keyType = gettype($name);
+        return $this;
+    }
+
+    /**
+     * Adds a new resource builder to the container.
+     *
+     * @param string   $name     The name of the resource.
+     * @param callable $resource The resource builder callback.
+     */
+    public function addBuilder($name, $resource)
+    {
+        $this->validateName($name);
+
+        if (!is_callable($resource)) {
+            $resourceType = gettype($resource);
             throw new \InvalidArgumentException(
-                "Resource names can only be strings. '$keyType' provided."
+            "The resource parameter for addBuilder must be a callable. "
+            . "'$resourceType' provided."
             );
         }
 
-        if (is_callable($resource)) {
-            $this->_builders[$name] = $resource;
-        } else {
-            $this->_values[$name] = $resource;
-        }
+        $this->_builders[$name] = $resource;
+        return $this;
+    }
 
+    /**
+     * Adds a new raw value to the container.
+     *
+     * @param string $name     The resource name.
+     * @param mixed  $resource The resource value.
+     */
+    public function addValue($name, $resource)
+    {
+        $this->validateName($name);
+        $this->_values[$name] = $resource;
         return $this;
     }
 
@@ -87,9 +112,9 @@ class Container
      * Constructs a builder for the supplied class.
      * The method receives a class name and an array in the form
      * ['methodName' => ['list', 'of', 'dependencies']]
-     * 
+     *
      * generates a builder function and adds it to the container.
-     * 
+     *
      * @param string $class Name associated with the resource.
      * @param array  $definition List of methods to be calld and its parameters.
      */
@@ -101,15 +126,13 @@ class Container
 
             if (isset($definition['__construct'])) {
                 $args = Container::buildDependencies(
-                        $container,
-                        $definition['__construct']
+                                $container, $definition['__construct']
                 );
             }
 
             $object = $reflectionClass->newInstanceArgs($args);
 
             foreach ($definition as $method => $dependencies) {
-
                 if ($method === '__construct') {
                     continue;
                 }
@@ -118,20 +141,42 @@ class Container
                 $reflectionMethod = $reflectionClass->getMethod($method);
                 $reflectionMethod->invokeArgs($object, $args);
             }
-            
+
             return $object;
         };
 
-        $this->add($class, $builder);
+        $this->addBuilder($class, $builder);
 
         return $this;
     }
 
     /**
-     * 
+     * Ensures that the name is a string and that it is not present
+     * in the container.
+     *
+     * @param  string $name The name of the resource.
+     */
+    private function validateName($name)
+    {
+        if (isset($this->_builders[$name]) || isset($this->_values[$name])) {
+            throw new \InvalidArgumentException("Resource '$name' is already present.");
+        }
+
+        if (!is_string($name)) {
+            $keyType = gettype($name);
+            throw new \InvalidArgumentException(
+            "Resource names can only be strings. '$keyType' provided."
+            );
+        }
+    }
+
+    /**
+     * Retrieve all dependencies from a list.
+     * TODO: Change it to a regular public method called getAll($resources).
+     *
      * @param \Rdthk\DependencyInjection\Container $container
      * @param string[] $dependencies A list of dependency names to be retrieved.
-     * 
+     *
      * @return array
      */
     private static function buildDependencies($container, $dependencies)
