@@ -23,7 +23,7 @@ $container->get(); // 1
 <?php
 $container = new Container();
 $calls = 0;
-$container->add(function ($container) use ($calls) {
+$container->add(function ($container) use (&$calls) {
     $calls++;
     return "foo";
 });
