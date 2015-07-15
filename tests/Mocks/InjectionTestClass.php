@@ -2,6 +2,10 @@
 
 namespace Rdthk\DependencyInjection\Tests\Mocks;
 
+/**
+ * Class used to test the Container::addClass
+ * method.
+ */
 class InjectionTestClass
 {
     private $constructorValue;
