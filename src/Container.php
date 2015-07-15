@@ -31,10 +31,9 @@ class Container
     /**
      * Stores a new resource in the container.
      *
-     * If a callable was passed as the $resource parameter,
-     * when this element is first retrieved, it will be
-     * stored as a builder and called and its return value cached when
-     * the resource is first retrieved.
+     * If a callable was passed as the $resource parameter it
+     * will be treated as a resource builder. Any other kinds of
+     * values  will be stored directly.
      *
      * @param string $name     Name associated with the resource.
      * @param mixed  $resource Callback or resource to be stored.
@@ -53,10 +52,12 @@ class Container
     }
 
     /**
-     * Adds a new resource builder to the container.
+     * Store a new resource builder in the container.
      *
      * @param string   $name     The name of the resource.
      * @param callable $resource The resource builder callback.
+     *
+     * @return \Rdthk\DependencyInjection\Container The container.
      */
     public function addBuilder($name, $resource)
     {
@@ -75,10 +76,12 @@ class Container
     }
 
     /**
-     * Adds a new raw value to the container.
+     * Store a raw value in the container.
      *
      * @param string $name     The resource name.
      * @param mixed  $resource The resource value.
+     *
+     * @return \Rdthk\DependencyInjection\Container The container.
      */
     public function addValue($name, $resource)
     {
@@ -117,6 +120,8 @@ class Container
      *
      * @param string $class Name associated with the resource.
      * @param array  $definition List of methods to be calld and its parameters.
+     *
+     * @return \Rdthk\DependencyInjection\Container The container.
      */
     public function addClass($class, $definition)
     {
@@ -177,7 +182,7 @@ class Container
      * @param \Rdthk\DependencyInjection\Container $container
      * @param string[] $dependencies A list of dependency names to be retrieved.
      *
-     * @return array
+     * @return array An array of values retrieved from the container.
      */
     private static function buildDependencies($container, $dependencies)
     {
