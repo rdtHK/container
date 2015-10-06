@@ -53,12 +53,38 @@ class ContainerTest extends PHPUnit_Framework_TestCase
      * Ensures the container allows the inclusion
      * of raw values
      */
-    public function testAddingDirectValues()
+    public function testAddingRawValues()
     {
         $container = new Container();
         $container->add('foo', 'bar');
 
         $this->assertEquals($container->get('foo'), 'bar');
+    }
+
+    /**
+     * Ensures that addValue does not
+     * call functions passed to it.
+     */
+    public function testAddingRawFunctions()
+    {
+        $container = new Container();
+        $container->addValue('foo', function() {
+            return 'bar';
+        });
+        $foo = $container->get('foo');
+        $this->assertTrue(is_callable($foo));
+    }
+
+    /**
+     * Ensures that addBuilder only accepts callables.
+     *
+     * @expectedException        \InvalidArgumentException
+     * @expectedExceptionMessage must be a callable.
+     */
+    public function testAddBuilder()
+    {
+        $container = new Container();
+        $container->addBuilder('foo', 1);
     }
 
     /**
