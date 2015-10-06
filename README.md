@@ -10,12 +10,17 @@ Missing things that should be added before 1.0:
 - A proper README.
 
 ## Examples
+Raw values are returned directly.
 
 ```php
 $container = new Container();
 $container->add('one', 1);
 $container->get('one'); // 1
 ```
+
+Builder functions are executed the first time 'get'
+is called and their return value is cached and returned
+on subsequent calls.
 
 ```php
 $container = new Container();
