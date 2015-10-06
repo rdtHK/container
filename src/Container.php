@@ -114,48 +114,6 @@ class Container
     }
 
     /**
-     * Constructs a builder for the supplied class.
-     * The method receives a class name and an array in the form
-     * ['methodName' => ['list', 'of', 'dependencies']]
-     *
-     * generates a builder function and adds it to the container.
-     *
-     * @param string $class Name associated with the resource.
-     * @param array  $definition List of methods to be calld and its parameters.
-     *
-     * @return \Rdthk\DependencyInjection\Container The container.
-     */
-    public function addClass($class, $definition)
-    {
-        $builder = function ($container) use ($class, $definition) {
-            $reflectionClass = new \ReflectionClass($class);
-            $args = [];
-
-            if (isset($definition['__construct'])) {
-                $args = $container->getAll($definition['__construct']);
-            }
-
-            $object = $reflectionClass->newInstanceArgs($args);
-
-            foreach ($definition as $method => $dependencies) {
-                if ($method === '__construct') {
-                    continue;
-                }
-
-                $args = $container->getAll($dependencies);
-                $reflectionMethod = $reflectionClass->getMethod($method);
-                $reflectionMethod->invokeArgs($object, $args);
-            }
-
-            return $object;
-        };
-
-        $this->addBuilder($class, $builder);
-
-        return $this;
-    }
-
-    /**
      * Ensures that the name is a string and that it is not present
      * in the container.
      *

@@ -15,7 +15,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-use Rdthk\DependencyInjection\Tests\Mocks\InjectionTestClass;
 use Rdthk\DependencyInjection\Container;
 
 class ContainerTest extends PHPUnit_Framework_TestCase
@@ -60,35 +59,6 @@ class ContainerTest extends PHPUnit_Framework_TestCase
         $container->add('foo', 'bar');
 
         $this->assertEquals($container->get('foo'), 'bar');
-    }
-
-    /**
-     * Ensures that the Container::addClass
-     * correctly builds the object with 
-     * the declared dependencies.
-     */
-    public function testClassBuilding()
-    {
-        $container = new Container();
-        $container->addClass(
-            InjectionTestClass::class,
-            [
-                '__construct' => ['bar',],
-                'setProperty' => ['baz',],
-            ]
-        );
-        $container->add('baz', 'baz');
-        $container->add(
-            'bar',
-            function ($container) {
-                return 'bar';
-            }
-        );
-
-        $testObject = $container->get(InjectionTestClass::class);
-
-        $this->assertEquals($testObject->getConstructorValue(), 'bar');
-        $this->assertEquals($testObject->getProperty(), 'baz');
     }
 
     /**

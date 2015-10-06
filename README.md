@@ -35,34 +35,3 @@ echo $calls; // 1
 echo $container->get('foo'); // 'bar'
 echo $calls; // 1
 ```
-
-```php
-class Foo {
-    public $bar;
-    public $baz;
-
-    public function __construct($bar) {
-        $this->bar = $bar;
-    }
-
-    public function setProperty($property) {
-        $this->baz = $property;
-    }
-}
-
-$container = new Container();
-$container->set('bar', 1);
-$container->set('baz', function ($container) {
-    return "ABC";
-});
-$container->set(
-    'Foo',
-    [
-        '__construct' => ['bar'],
-        'setProperty' => ['baz'],
-    ]
-);
-$foo = $container->get('Foo');
-echo $foo->bar; // 1
-echo $foo->baz; // ABC
-```
