@@ -13,23 +13,24 @@ Missing things that should be added before 1.0:
 
 ```php
 $container = new Container();
-$container->add(1);
-$container->get(); // 1
+$container->add('one', 1);
+$container->get('one'); // 1
 ```
 
 ```php
 $container = new Container();
 $calls = 0;
-$container->add(function ($container) use (&$calls) {
+$container->add('foo', function ($container) use (&$calls) {
     $calls++;
-    return "foo";
+    return 'bar';
 });
 
-echo $container->get(); // foo
+echo $container->get('foo'); // 'bar'
 echo $calls; // 1
-echo $container->get(); // "foo"
-echo $calls // 1
+echo $container->get('foo'); // 'bar'
+echo $calls; // 1
 ```
+
 ```php
 class Foo {
     public $bar;
@@ -49,13 +50,14 @@ $container->set('bar', 1);
 $container->set('baz', function ($container) {
     return "ABC";
 });
-$foo = $container->get(
+$container->set(
     'Foo',
     [
         '__construct' => ['bar'],
         'setProperty' => ['baz'],
     ]
 );
+$foo = $container->get('Foo');
 echo $foo->bar; // 1
 echo $foo->baz; // ABC
 ```
