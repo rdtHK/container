@@ -66,8 +66,8 @@ class Container
         if (!is_callable($resource)) {
             $resourceType = gettype($resource);
             throw new \InvalidArgumentException(
-            "The resource parameter for addBuilder must be a callable. "
-            . "'$resourceType' provided."
+                "The resource parameter for addBuilder must be a callable. " .
+                "'$resourceType' provided."
             );
         }
 
@@ -100,7 +100,9 @@ class Container
     public function get($name)
     {
         if (!empty($this->_builders[$name])) {
-            $this->_values[$name] = call_user_func($this->_builders[$name], $this);
+            $this->_values[$name] = call_user_func(
+                $this->_builders[$name], $this
+            );
             unset($this->_builders[$name]);
         }
 
@@ -162,13 +164,15 @@ class Container
     private function validateName($name)
     {
         if (isset($this->_builders[$name]) || isset($this->_values[$name])) {
-            throw new \InvalidArgumentException("Resource '$name' is already present.");
+            throw new \InvalidArgumentException(
+                "Resource '$name' is already present."
+            );
         }
 
         if (!is_string($name)) {
             $keyType = gettype($name);
             throw new \InvalidArgumentException(
-            "Resource names can only be strings. '$keyType' provided."
+                "Resource names can only be strings. '$keyType' provided."
             );
         }
     }
