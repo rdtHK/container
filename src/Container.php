@@ -135,22 +135,4 @@ class Container
         }
     }
 
-    /**
-     * Retrieve all dependencies from a list.
-     *
-     * @param string[] $dependencies A list of dependency names to be retrieved.
-     *
-     * @return array An array of values retrieved from the container.
-     */
-    public function getAll($dependencies)
-    {
-        $args = [];
-
-        foreach ($dependencies as $dep) {
-            $args[] = $this->get($dep);
-        }
-
-        return $args;
-    }
-
 }
