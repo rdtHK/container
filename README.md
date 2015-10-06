@@ -12,15 +12,12 @@ Missing things that should be added before 1.0:
 ## Examples
 
 ```php
-<?php
 $container = new Container();
 $container->add(1);
 $container->get(); // 1
-?>
 ```
 
 ```php
-<?php
 $container = new Container();
 $calls = 0;
 $container->add(function ($container) use (&$calls) {
@@ -32,10 +29,8 @@ echo $container->get(); // foo
 echo $calls; // 1
 echo $container->get(); // "foo"
 echo $calls // 1
-?>
 ```
 ```php
-<?php
 class Foo {
     public $bar;
     public $baz;
@@ -63,5 +58,4 @@ $foo = $container->get(
 );
 echo $foo->bar; // 1
 echo $foo->baz; // ABC
-?>
 ```
