@@ -130,9 +130,7 @@ class Container
             $args = [];
 
             if (isset($definition['__construct'])) {
-                $args = Container::buildDependencies(
-                                $container, $definition['__construct']
-                );
+                $args = $container->getAll($definition['__construct']);
             }
 
             $object = $reflectionClass->newInstanceArgs($args);
@@ -142,7 +140,7 @@ class Container
                     continue;
                 }
 
-                $args = Container::buildDependencies($container, $dependencies);
+                $args = $container->getAll($dependencies);
                 $reflectionMethod = $reflectionClass->getMethod($method);
                 $reflectionMethod->invokeArgs($object, $args);
             }
@@ -177,19 +175,17 @@ class Container
 
     /**
      * Retrieve all dependencies from a list.
-     * TODO: Change it to a regular public method called getAll($resources).
      *
-     * @param \Rdthk\DependencyInjection\Container $container
      * @param string[] $dependencies A list of dependency names to be retrieved.
      *
      * @return array An array of values retrieved from the container.
      */
-    private static function buildDependencies($container, $dependencies)
+    public function getAll($dependencies)
     {
         $args = [];
 
         foreach ($dependencies as $dep) {
-            $args[] = $container->get($dep);
+            $args[] = $this->get($dep);
         }
 
         return $args;
