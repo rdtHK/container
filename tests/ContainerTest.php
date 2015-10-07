@@ -19,29 +19,58 @@ use Rdthk\DependencyInjection\Container;
 
 class ContainerTest extends PHPUnit_Framework_TestCase
 {
-    protected function _before()
+    private $container;
+
+    public function setUp()
     {
+        $this->container = new Container();
     }
 
-    protected function _after()
+    public function testAddValueThenBuilder()
     {
+        $this->container->add('foo', 'foo-1');
+        $this->container->add('bar', function ($container) {
+            return 'bar-1';
+        });
+        $this->assertEquals($this->container->get('foo'), 'foo-1');
+        $this->assertEquals($this->container->get('bar'), 'bar-1');
     }
 
-    /**
-     * Ensures the container will
-     * call builder functions.
-     */
-    public function testAddingBuilderFunctions()
+    public function testAddBuilderThenValue()
     {
-        $container = new Container();
-        $container->add(
-            'foo',
-            function ($container) {
-                return 'bar';
-            }
-        );
+        $this->container->add('foo', function($container) {
+            return 'foo-1';
+        });
+        $this->container->add('bar', 'bar-1');
+        $this->assertEquals($this->container->get('foo'), 'foo-1');
+        $this->assertEquals($this->container->get('bar'), 'bar-1');
+    }
 
-        $this->assertEquals($container->get('foo'), 'bar');
+    public function testAddValueThenValue()
+    {
+        // Value then value
+        $this->container->add('foo', 'foo-1');
+        $this->container->add('bar', 'bar-1');
+        $this->assertEquals($this->container->get('foo'), 'foo-1');
+        $this->assertEquals($this->container->get('bar'), 'bar-1');
+    }
+
+    public function testAddBuilderThenBuilder()
+    {
+        $this->container->add('foo', function ($container) {
+            return 'foo-1';
+        });
+        $this->container->add('bar', function ($container) {
+            return 'bar-1';
+        });
+        $this->assertEquals($this->container->get('foo'), 'foo-1');
+        $this->assertEquals($this->container->get('bar'), 'bar-1');
+    }
+
+    public function testAddNull()
+    {
+        $this->container->add('foo', null);
+        $this->assertNull($this->container->get('foo'));
     }
 
     /**
@@ -50,10 +79,8 @@ class ContainerTest extends PHPUnit_Framework_TestCase
      */
     public function testAddingRawValues()
     {
-        $container = new Container();
-        $container->add('foo', 'bar');
-
-        $this->assertEquals($container->get('foo'), 'bar');
+        $this->container->add('foo', 'bar');
+        $this->assertEquals($this->container->get('foo'), 'bar');
     }
 
     /**
@@ -62,11 +89,10 @@ class ContainerTest extends PHPUnit_Framework_TestCase
      */
     public function testAddingRawFunctions()
     {
-        $container = new Container();
-        $container->addValue('foo', function() {
+        $this->container->addValue('foo', function() {
             return 'bar';
         });
-        $foo = $container->get('foo');
+        $foo = $this->container->get('foo');
         $this->assertTrue(is_callable($foo));
     }
 
@@ -78,8 +104,7 @@ class ContainerTest extends PHPUnit_Framework_TestCase
      */
     public function testAddBuilder()
     {
-        $container = new Container();
-        $container->addBuilder('foo', 1);
+        $this->container->addBuilder('foo', 1);
     }
 
     /**
@@ -92,8 +117,7 @@ class ContainerTest extends PHPUnit_Framework_TestCase
      */
     public function testAskingForUndefinedItem()
     {
-        $container = new Container();
-        $container->get('foo');
+        $this->container->get('foo');
     }
 
     /**
@@ -106,9 +130,8 @@ class ContainerTest extends PHPUnit_Framework_TestCase
      */
     public function testAddingRepeatedItems()
     {
-        $container = new Container();
-        $container->add('foo', 1);
-        $container->add(
+        $this->container->add('foo', 1);
+        $this->container->add(
             'foo',
             function ($container) {
                 return 'bar';
@@ -122,10 +145,8 @@ class ContainerTest extends PHPUnit_Framework_TestCase
      */
     public function testAddReturnsThis()
     {
-        $container = new Container();
-        $y = $container->add('foo', 'bar');
-
-        $this->assertSame($container, $y);
+        $y = $this->container->add('foo', 'bar');
+        $this->assertSame($this->container, $y);
     }
 
     /**
@@ -136,9 +157,8 @@ class ContainerTest extends PHPUnit_Framework_TestCase
      * @expectedException        \InvalidArgumentException
      * @expectedExceptionMessage  Resource names can only be strings. 'integer' provided.
      */
-    public function testAddingInvalidKeyType()
+    public function testAddInvalidKeyType()
     {
-        $container = new Container();
-        $container->add(1, 'foo');
+        $this->container->add(1, 'foo');
     }
 }

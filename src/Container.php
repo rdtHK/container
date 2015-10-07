@@ -99,14 +99,14 @@ class Container
      */
     public function get($name)
     {
-        if (!empty($this->_builders[$name])) {
+        if (array_key_exists($name, $this->_builders)) {
             $this->_values[$name] = call_user_func(
                 $this->_builders[$name], $this
             );
             unset($this->_builders[$name]);
         }
 
-        if (empty($this->_values[$name])) {
+        if (!array_key_exists($name, $this->_values)) {
             throw new \InvalidArgumentException("Undeclared resource '$name'.");
         }
 
