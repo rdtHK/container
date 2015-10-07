@@ -19,11 +19,6 @@ use Rdthk\DependencyInjection\Container;
 
 class ContainerTest extends PHPUnit_Framework_TestCase
 {
-    /**
-     * @var \UnitTester
-     */
-    protected $tester;
-
     protected function _before()
     {
     }
