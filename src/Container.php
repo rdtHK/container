@@ -66,8 +66,7 @@ class Container
         if (!is_callable($resource)) {
             $resourceType = gettype($resource);
             throw new \InvalidArgumentException(
-                "The resource parameter for addBuilder must be a callable. " .
-                "'$resourceType' provided."
+                "'$resourceType' is not callable."
             );
         }
 
@@ -123,14 +122,14 @@ class Container
     {
         if (isset($this->_builders[$name]) || isset($this->_values[$name])) {
             throw new \InvalidArgumentException(
-                "Resource '$name' is already present."
+                "Resource '$name' was already declared."
             );
         }
 
         if (!is_string($name)) {
             $keyType = gettype($name);
             throw new \InvalidArgumentException(
-                "Resource names can only be strings. '$keyType' provided."
+                "'$keyType' is not a string."
             );
         }
     }

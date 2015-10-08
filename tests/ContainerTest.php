@@ -100,7 +100,7 @@ class ContainerTest extends PHPUnit_Framework_TestCase
      * Ensures that addBuilder only accepts callables.
      *
      * @expectedException        \InvalidArgumentException
-     * @expectedExceptionMessage must be a callable.
+     * @expectedExceptionMessage 'integer' is not callable.
      */
     public function testAddBuilder()
     {
@@ -126,7 +126,7 @@ class ContainerTest extends PHPUnit_Framework_TestCase
      * two values with the same name.
      *
      * @expectedException        \InvalidArgumentException
-     * @expectedExceptionMessage Resource 'foo' is already present.
+     * @expectedExceptionMessage Resource 'foo' was already declared.
      */
     public function testAddingRepeatedItems()
     {
@@ -155,7 +155,7 @@ class ContainerTest extends PHPUnit_Framework_TestCase
      * define a non string key.
      *
      * @expectedException        \InvalidArgumentException
-     * @expectedExceptionMessage  Resource names can only be strings. 'integer' provided.
+     * @expectedExceptionMessage  'integer' is not a string.
      */
     public function testAddInvalidKeyType()
     {
