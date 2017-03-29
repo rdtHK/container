@@ -28,8 +28,8 @@ class ContainerTest extends PHPUnit_Framework_TestCase
 
     public function testAddValueThenBuilder()
     {
-        $this->container->add('foo', 'foo-1');
-        $this->container->add('bar', function ($container) {
+        $this->container->bind('foo', 'foo-1');
+        $this->container->bind('bar', function ($container) {
             return 'bar-1';
         });
         $this->assertEquals($this->container->get('foo'), 'foo-1');
@@ -38,10 +38,10 @@ class ContainerTest extends PHPUnit_Framework_TestCase
 
     public function testAddBuilderThenValue()
     {
-        $this->container->add('foo', function($container) {
+        $this->container->bind('foo', function($container) {
             return 'foo-1';
         });
-        $this->container->add('bar', 'bar-1');
+        $this->container->bind('bar', 'bar-1');
         $this->assertEquals($this->container->get('foo'), 'foo-1');
         $this->assertEquals($this->container->get('bar'), 'bar-1');
     }
@@ -49,18 +49,18 @@ class ContainerTest extends PHPUnit_Framework_TestCase
     public function testAddValueThenValue()
     {
         // Value then value
-        $this->container->add('foo', 'foo-1');
-        $this->container->add('bar', 'bar-1');
+        $this->container->bind('foo', 'foo-1');
+        $this->container->bind('bar', 'bar-1');
         $this->assertEquals($this->container->get('foo'), 'foo-1');
         $this->assertEquals($this->container->get('bar'), 'bar-1');
     }
 
     public function testAddBuilderThenBuilder()
     {
-        $this->container->add('foo', function ($container) {
+        $this->container->bind('foo', function ($container) {
             return 'foo-1';
         });
-        $this->container->add('bar', function ($container) {
+        $this->container->bind('bar', function ($container) {
             return 'bar-1';
         });
         $this->assertEquals($this->container->get('foo'), 'foo-1');
@@ -69,7 +69,7 @@ class ContainerTest extends PHPUnit_Framework_TestCase
 
     public function testAddNull()
     {
-        $this->container->add('foo', null);
+        $this->container->bind('foo', null);
         $this->assertNull($this->container->get('foo'));
     }
 
@@ -79,7 +79,7 @@ class ContainerTest extends PHPUnit_Framework_TestCase
      */
     public function testAddingRawValues()
     {
-        $this->container->add('foo', 'bar');
+        $this->container->bind('foo', 'bar');
         $this->assertEquals($this->container->get('foo'), 'bar');
     }
 
@@ -130,8 +130,8 @@ class ContainerTest extends PHPUnit_Framework_TestCase
      */
     public function testAddingRepeatedItems()
     {
-        $this->container->add('foo', 1);
-        $this->container->add(
+        $this->container->bind('foo', 1);
+        $this->container->bind(
             'foo',
             function ($container) {
                 return 'bar';
@@ -145,7 +145,7 @@ class ContainerTest extends PHPUnit_Framework_TestCase
      */
     public function testAddReturnsThis()
     {
-        $y = $this->container->add('foo', 'bar');
+        $y = $this->container->bind('foo', 'bar');
         $this->assertSame($this->container, $y);
     }
 
@@ -159,6 +159,6 @@ class ContainerTest extends PHPUnit_Framework_TestCase
      */
     public function testAddInvalidKeyType()
     {
-        $this->container->add(1, 'foo');
+        $this->container->bind(1, 'foo');
     }
 }

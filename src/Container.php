@@ -40,7 +40,7 @@ class Container
      *
      * @return \Rdthk\DependencyInjection\Container The container.
      */
-    public function add($name, $resource)
+    public function bind($name, $resource)
     {
         if (is_callable($resource)) {
             $this->addBuilder($name, $resource);

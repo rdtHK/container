@@ -14,7 +14,7 @@ Raw values are returned directly.
 
 ```php
 $container = new Container();
-$container->add('one', 1);
+$container->bind('one', 1);
 $container->get('one'); // 1
 ```
 
@@ -25,7 +25,7 @@ on subsequent calls.
 ```php
 $container = new Container();
 $calls = 0;
-$container->add('foo', function ($container) use (&$calls) {
+$container->bind('foo', function ($container) use (&$calls) {
     $calls++;
     return 'bar';
 });
@@ -35,3 +35,19 @@ echo $calls; // 1
 echo $container->get('foo'); // 'bar'
 echo $calls; // 1
 ```
+
+$container = new Container();
+$container->bind('foo', function ($container) use (&$calls) {
+    $calls++;
+    return 'bar';
+});
+
+echo $container->build('foo'); // 'bar'
+echo $calls; // 1
+echo $container->build('foo'); // 'bar'
+echo $calls; // 2
+
+
+$container->bind(MyInterface::class, function (MyClass $obj, $container) {
+    return $obj;
+});
