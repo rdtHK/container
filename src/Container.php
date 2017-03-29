@@ -32,7 +32,7 @@ class Container
      * Stores a new resource in the container.
      *
      * If a callable was passed as the $resource parameter it
-     * will be treated as a resource builder. Any other kinds of
+     * will be treated as a resource factory. Any other kinds of
      * values  will be stored directly.
      *
      * @param string $name     Name associated with the resource.
@@ -43,7 +43,7 @@ class Container
     public function bind($name, $resource)
     {
         if (is_callable($resource)) {
-            $this->bindBuilder($name, $resource);
+            $this->bindFactory($name, $resource);
         } else {
             $this->bindValue($name, $resource);
         }
@@ -52,14 +52,14 @@ class Container
     }
 
     /**
-     * Store a new resource builder in the container.
+     * Store a new resource factory in the container.
      *
      * @param string   $name     The name of the resource.
-     * @param callable $resource The resource builder callback.
+     * @param callable $resource The resource factory callback.
      *
      * @return \Rdthk\DependencyInjection\Container The container.
      */
-    public function bindBuilder($name, $resource)
+    public function bindFactory($name, $resource)
     {
         $this->validateName($name);
 

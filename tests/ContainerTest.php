@@ -26,7 +26,7 @@ class ContainerTest extends PHPUnit_Framework_TestCase
         $this->container = new Container();
     }
 
-    public function testBindValueThenBuilder()
+    public function testBindValueThenFactory()
     {
         $this->container->bind('foo', 'foo-1');
         $this->container->bind('bar', function ($container) {
@@ -36,7 +36,7 @@ class ContainerTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($this->container->get('bar'), 'bar-1');
     }
 
-    public function testBindBuilderThenValue()
+    public function testBindFactoryThenValue()
     {
         $this->container->bind('foo', function($container) {
             return 'foo-1';
@@ -55,7 +55,7 @@ class ContainerTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($this->container->get('bar'), 'bar-1');
     }
 
-    public function testBindBuilderThenBuilder()
+    public function testBindFactoryThenFactory()
     {
         $this->container->bind('foo', function ($container) {
             return 'foo-1';
@@ -97,14 +97,14 @@ class ContainerTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * Ensures that bindBuilder only accepts callables.
+     * Ensures that bindFactory only accepts callables.
      *
      * @expectedException        \InvalidArgumentException
      * @expectedExceptionMessage 'integer' is not callable.
      */
-    public function testBindBuilder()
+    public function testBindFactory()
     {
-        $this->container->bindBuilder('foo', 1);
+        $this->container->bindFactory('foo', 1);
     }
 
     /**
