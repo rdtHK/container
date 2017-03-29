@@ -26,7 +26,7 @@ class ContainerTest extends PHPUnit_Framework_TestCase
         $this->container = new Container();
     }
 
-    public function testAddValueThenBuilder()
+    public function testBindValueThenBuilder()
     {
         $this->container->bind('foo', 'foo-1');
         $this->container->bind('bar', function ($container) {
@@ -36,7 +36,7 @@ class ContainerTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($this->container->get('bar'), 'bar-1');
     }
 
-    public function testAddBuilderThenValue()
+    public function testBindBuilderThenValue()
     {
         $this->container->bind('foo', function($container) {
             return 'foo-1';
@@ -46,7 +46,7 @@ class ContainerTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($this->container->get('bar'), 'bar-1');
     }
 
-    public function testAddValueThenValue()
+    public function testBindValueThenValue()
     {
         // Value then value
         $this->container->bind('foo', 'foo-1');
@@ -55,7 +55,7 @@ class ContainerTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($this->container->get('bar'), 'bar-1');
     }
 
-    public function testAddBuilderThenBuilder()
+    public function testBindBuilderThenBuilder()
     {
         $this->container->bind('foo', function ($container) {
             return 'foo-1';
@@ -67,7 +67,7 @@ class ContainerTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($this->container->get('bar'), 'bar-1');
     }
 
-    public function testAddNull()
+    public function testBindNull()
     {
         $this->container->bind('foo', null);
         $this->assertNull($this->container->get('foo'));
@@ -77,19 +77,19 @@ class ContainerTest extends PHPUnit_Framework_TestCase
      * Ensures the container allows the inclusion
      * of raw values
      */
-    public function testAddingRawValues()
+    public function testBindingRawValues()
     {
         $this->container->bind('foo', 'bar');
         $this->assertEquals($this->container->get('foo'), 'bar');
     }
 
     /**
-     * Ensures that addValue does not
+     * Ensures that bindValue does not
      * call functions passed to it.
      */
-    public function testAddingRawFunctions()
+    public function testBindingRawFunctions()
     {
-        $this->container->addValue('foo', function() {
+        $this->container->bindValue('foo', function() {
             return 'bar';
         });
         $foo = $this->container->get('foo');
@@ -97,14 +97,14 @@ class ContainerTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * Ensures that addBuilder only accepts callables.
+     * Ensures that bindBuilder only accepts callables.
      *
      * @expectedException        \InvalidArgumentException
      * @expectedExceptionMessage 'integer' is not callable.
      */
-    public function testAddBuilder()
+    public function testBindBuilder()
     {
-        $this->container->addBuilder('foo', 1);
+        $this->container->bindBuilder('foo', 1);
     }
 
     /**
@@ -143,7 +143,7 @@ class ContainerTest extends PHPUnit_Framework_TestCase
      * Ensures that Container::add returns
      * $this.
      */
-    public function testAddReturnsThis()
+    public function testBindReturnsThis()
     {
         $y = $this->container->bind('foo', 'bar');
         $this->assertSame($this->container, $y);
@@ -157,7 +157,7 @@ class ContainerTest extends PHPUnit_Framework_TestCase
      * @expectedException        \InvalidArgumentException
      * @expectedExceptionMessage  'integer' is not a string.
      */
-    public function testAddInvalidKeyType()
+    public function testBindInvalidKeyType()
     {
         $this->container->bind(1, 'foo');
     }

@@ -43,9 +43,9 @@ class Container
     public function bind($name, $resource)
     {
         if (is_callable($resource)) {
-            $this->addBuilder($name, $resource);
+            $this->bindBuilder($name, $resource);
         } else {
-            $this->addValue($name, $resource);
+            $this->bindValue($name, $resource);
         }
 
         return $this;
@@ -59,7 +59,7 @@ class Container
      *
      * @return \Rdthk\DependencyInjection\Container The container.
      */
-    public function addBuilder($name, $resource)
+    public function bindBuilder($name, $resource)
     {
         $this->validateName($name);
 
@@ -82,7 +82,7 @@ class Container
      *
      * @return \Rdthk\DependencyInjection\Container The container.
      */
-    public function addValue($name, $resource)
+    public function bindValue($name, $resource)
     {
         $this->validateName($name);
         $this->_values[$name] = $resource;
