@@ -25,7 +25,6 @@ namespace Rdthk\DependencyInjection;
 class Container
 {
 
-    private $_builders = [];
     private $cache = [];
     private $bindings = [];
 
@@ -71,7 +70,7 @@ class Container
             );
         }
 
-        $this->_builders[$name] = $resource;
+        $this->bindings[$name] = new FactoryBinding($resource);
         return $this;
     }
 
@@ -99,13 +98,6 @@ class Container
      */
     public function get($name)
     {
-        if (array_key_exists($name, $this->_builders)) {
-            $this->cache[$name] = call_user_func(
-                $this->_builders[$name], $this
-            );
-            unset($this->_builders[$name]);
-        }
-
         if (array_key_exists($name, $this->cache)) {
             return $this->cache[$name];
         }
@@ -114,7 +106,9 @@ class Container
             throw new \InvalidArgumentException("Undeclared resource '$name'.");
         }
 
-        return $this->bindings[$name]->build($this);
+        $value = $this->bindings[$name]->build($this);
+        $this->cache[$name] = $value;
+        return $value;
     }
 
     /**
@@ -125,7 +119,7 @@ class Container
      */
     private function validateName($name)
     {
-        if (isset($this->_builders[$name]) || isset($this->bindings[$name])) {
+        if (isset($this->bindings[$name])) {
             throw new \InvalidArgumentException(
                 "Resource '$name' was already declared."
             );
