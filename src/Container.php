@@ -27,6 +27,7 @@ class Container
 
     private $_builders = [];
     private $_values = [];
+    private $bindings = [];
 
     /**
      * Stores a new resource in the container.
@@ -85,7 +86,8 @@ class Container
     public function bindValue($name, $resource)
     {
         $this->validateName($name);
-        $this->_values[$name] = $resource;
+        // $this->_values[$name] = $resource;
+        $this->bindings[$name] = new ValueBinding($resource);
         return $this;
     }
 
@@ -105,11 +107,15 @@ class Container
             unset($this->_builders[$name]);
         }
 
-        if (!array_key_exists($name, $this->_values)) {
+        if (array_key_exists($name, $this->_values)) {
+            return $this->_values[$name];
+        }
+
+        if (!array_key_exists($name, $this->bindings)) {
             throw new \InvalidArgumentException("Undeclared resource '$name'.");
         }
 
-        return $this->_values[$name];
+        return $this->bindings[$name]->build($this);
     }
 
     /**
@@ -120,7 +126,7 @@ class Container
      */
     private function validateName($name)
     {
-        if (isset($this->_builders[$name]) || isset($this->_values[$name])) {
+        if (isset($this->_builders[$name]) || isset($this->bindings[$name])) {
             throw new \InvalidArgumentException(
                 "Resource '$name' was already declared."
             );
