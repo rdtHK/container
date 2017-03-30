@@ -25,7 +25,6 @@ namespace Rdthk\DependencyInjection;
 class Container
 {
 
-    private $cache = [];
     private $bindings = [];
 
     /**
@@ -37,15 +36,16 @@ class Container
      *
      * @param string $name     Name associated with the resource.
      * @param mixed  $resource Callback or resource to be stored.
+     * @param string $scope    The resource scope.
      *
      * @return \Rdthk\DependencyInjection\Container The container.
      */
-    public function bind($name, $resource)
+    public function bind($name, $resource, $scope=DependentScope::class)
     {
         if (is_callable($resource)) {
-            $this->bindFactory($name, $resource);
+            $this->bindFactory($name, $resource, $scope);
         } else {
-            $this->bindValue($name, $resource);
+            $this->bindValue($name, $resource, $scope);
         }
 
         return $this;
@@ -56,10 +56,11 @@ class Container
      *
      * @param string   $name     The name of the resource.
      * @param callable $resource The resource factory callback.
+     * @param string $scope    The resource scope.
      *
      * @return \Rdthk\DependencyInjection\Container The container.
      */
-    public function bindFactory($name, $resource)
+    public function bindFactory($name, $resource, $scope=DependentScope::class)
     {
         $this->validateName($name);
 
@@ -70,7 +71,7 @@ class Container
             );
         }
 
-        $this->bindings[$name] = new FactoryBinding($resource);
+        $this->bindings[$name] = new $scope($name, new FactoryBinding($resource));
         return $this;
     }
 
@@ -79,13 +80,14 @@ class Container
      *
      * @param string $name     The resource name.
      * @param mixed  $resource The resource value.
+     * @param string $scope    The resource scope.
      *
      * @return \Rdthk\DependencyInjection\Container The container.
      */
-    public function bindValue($name, $resource)
+    public function bindValue($name, $resource, $scope=DependentScope::class)
     {
         $this->validateName($name);
-        $this->bindings[$name] = new ValueBinding($resource);
+        $this->bindings[$name] = new $scope($name, new ValueBinding($resource));
         return $this;
     }
 
@@ -98,17 +100,11 @@ class Container
      */
     public function get($name)
     {
-        if (array_key_exists($name, $this->cache)) {
-            return $this->cache[$name];
-        }
-
         if (!array_key_exists($name, $this->bindings)) {
             throw new \InvalidArgumentException("Undeclared resource '$name'.");
         }
 
-        $value = $this->bindings[$name]->build($this);
-        $this->cache[$name] = $value;
-        return $value;
+        return $this->bindings[$name]->getInstance($this);
     }
 
     /**

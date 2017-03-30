@@ -16,6 +16,8 @@
  * limitations under the License.
  */
 use Rdthk\DependencyInjection\Container;
+use Rdthk\DependencyInjection\SingletonScope;
+use Rdthk\DependencyInjection\DependentScope;
 
 class ContainerTest extends PHPUnit_Framework_TestCase
 {
@@ -71,6 +73,42 @@ class ContainerTest extends PHPUnit_Framework_TestCase
     {
         $this->container->bind('foo', null);
         $this->assertNull($this->container->get('foo'));
+    }
+
+    public function testDefaultScopeIsDependent()
+    {
+        $this->container->bind('foo', function ($container) {
+            return new ContainerTest;
+        });
+
+        $this->assertNotSame(
+            $this->container->get('foo'),
+            $this->container->get('foo')
+        );
+    }
+
+    public function testDependentScope()
+    {
+        $this->container->bind('foo', function ($container) {
+            return new ContainerTest;
+        }, DependentScope::class);
+
+        $this->assertNotSame(
+            $this->container->get('foo'),
+            $this->container->get('foo')
+        );
+    }
+
+    public function testSingletonScope()
+    {
+        $this->container->bind('foo', function ($container) {
+            return new ContainerTest;
+        }, SingletonScope::class);
+
+        $this->assertSame(
+            $this->container->get('foo'),
+            $this->container->get('foo')
+        );
     }
 
     /**
