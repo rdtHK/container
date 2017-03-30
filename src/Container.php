@@ -44,6 +44,8 @@ class Container
     {
         if (is_callable($resource)) {
             $this->bindFactory($name, $resource, $scope);
+        } elseif (class_exists($resource)) {
+            $this->bindClass($name, $resource, $scope);
         } else {
             $this->bindValue($name, $resource, $scope);
         }
@@ -88,6 +90,22 @@ class Container
     {
         $this->validateName($name);
         $this->bindings[$name] = new $scope($name, new ValueBinding($resource));
+        return $this;
+    }
+
+    /**
+     * Store a raw value in the container.
+     *
+     * @param string $name     The resource name.
+     * @param string $resource The resource class.
+     * @param string $scope    The resource scope.
+     *
+     * @return \Rdthk\DependencyInjection\Container The container.
+     */
+    public function bindClass($name, $resource, $scope=DependentScope::class)
+    {
+        $this->validateName($name);
+        $this->bindings[$name] = new $scope($name, new ClassBinding($resource));
         return $this;
     }
 

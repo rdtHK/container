@@ -15,12 +15,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Rdthk\DependencyInjection\Tests\util;
 
-class DummyClass implements DummyInterface
+namespace Rdthk\DependencyInjection;
+
+/**
+ *
+ */
+class ClassBinding implements Binding
 {
-    public function returnValue()
+    private $class;
+
+    public function __construct($class)
     {
-        return 'hello';
+        $this->class = $class;
+    }
+
+    public function build($container)
+    {
+        $c = $this->class;
+        return new $c();
     }
 }
