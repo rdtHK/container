@@ -21,14 +21,38 @@ namespace Rdthk\DependencyInjection;
 /**
  *
  */
-class FactoryBinding implements Binding {
+class FactoryBinding implements Binding
+{
     private $factory;
 
-    public function __construct($factory) {
+    public function __construct($factory)
+    {
         $this->factory = $factory;
     }
 
-    public function build($container) {
-        return call_user_func($this->factory, $container);
+    public function build($container)
+    {
+        $ref = new \ReflectionFunction($this->factory);
+        $parameters = $ref->getParameters();
+        $arguments = [];
+        $containerPassed = false;
+
+        foreach ($parameters as $parameter) {
+            if ($parameter->hasType()) {
+                $arguments[] = $container->get((string) $parameter->getType());
+            } else {
+                if ($containerPassed) {
+                    $pName = $parameter->getName();
+                    throw new \TypeError(
+                        "Factory parameter '{$pName}' is missing a type hint."
+                    );
+                }
+
+                $arguments[] = $container;
+                $containerPassed = true;
+            }
+        }
+
+        return call_user_func_array($this->factory, $arguments);
     }
 }

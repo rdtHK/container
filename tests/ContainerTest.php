@@ -15,11 +15,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+namespace Rdthk\DependencyInjection\Tests;
+
+use PHPUnit\Framework\TestCase;
+
 use Rdthk\DependencyInjection\Container;
 use Rdthk\DependencyInjection\SingletonScope;
 use Rdthk\DependencyInjection\DependentScope;
 
-class ContainerTest extends PHPUnit_Framework_TestCase
+use Rdthk\DependencyInjection\Tests\util\DummyInterface;
+use Rdthk\DependencyInjection\Tests\util\DummyClass;
+
+class ContainerTest extends TestCase
 {
     private $container;
 
@@ -111,6 +118,32 @@ class ContainerTest extends PHPUnit_Framework_TestCase
         );
     }
 
+    public function testFactoryParameterInjection()
+    {
+        $this->container->bind(DummyInterface::class, function ($container) {
+            return new DummyClass;
+        });
+        $this->container->bind('foo', function (DummyInterface $obj, $container) {
+            return $obj->returnValue() . "!";
+        });
+        $this->assertEquals("foo!", $this->container->get('foo'));
+    }
+
+    /**
+     * Ensures the container throws an exception in case
+     * there's a missing parameter type hint.
+     *
+     * @expectedException \TypeError
+     * @expectedExceptionMessage 'b' is missing a type hint
+     */
+    public function testFactoryMissingTypeHint()
+    {
+        $this->container->bind('foo', function ($a, $b) {
+            return 42;
+        });
+        $this->container->get('foo');
+    }
+
     /**
      * Ensures the container allows the inclusion
      * of raw values
@@ -186,6 +219,7 @@ class ContainerTest extends PHPUnit_Framework_TestCase
         $y = $this->container->bind('foo', 'bar');
         $this->assertSame($this->container, $y);
     }
+
 
     /**
      * Ensures the container will throw an
