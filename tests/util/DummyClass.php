@@ -19,8 +19,15 @@ namespace Rdthk\DependencyInjection\Tests\util;
 
 class DummyClass implements DummyInterface
 {
+    private $value;
+
+    public function __construct($value)
+    {
+        $this->value = $value;
+    }
+
     public function returnValue()
     {
-        return "foo";
+        return $this->value;
     }
 }

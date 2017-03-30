@@ -21,6 +21,7 @@ namespace Rdthk\DependencyInjection;
 /**
  *
  */
-interface Binding {
+interface Binding
+{
     public function build($container);
 }

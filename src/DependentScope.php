@@ -21,13 +21,16 @@ namespace Rdthk\DependencyInjection;
 /**
  *
  */
-class DependentScope implements Scope {
+class DependentScope implements Scope
+{
 
-    public function __construct($name, $binding) {
+    public function __construct($name, $binding)
+    {
         $this->binding = $binding;
     }
 
-    public function getInstance($container) {
+    public function getInstance($container)
+    {
         return $this->binding->build($container);
     }
 }

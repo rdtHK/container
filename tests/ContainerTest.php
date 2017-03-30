@@ -121,12 +121,12 @@ class ContainerTest extends TestCase
     public function testFactoryParameterInjection()
     {
         $this->container->bind(DummyInterface::class, function ($container) {
-            return new DummyClass;
+            return new DummyClass('hello');
         });
         $this->container->bind('foo', function (DummyInterface $obj, $container) {
             return $obj->returnValue() . "!";
         });
-        $this->assertEquals("foo!", $this->container->get('foo'));
+        $this->assertEquals('hello!', $this->container->get('foo'));
     }
 
     /**

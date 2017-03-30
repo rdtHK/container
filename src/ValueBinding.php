@@ -21,14 +21,17 @@ namespace Rdthk\DependencyInjection;
 /**
  *
  */
-class ValueBinding implements Binding {
+class ValueBinding implements Binding
+{
     private $value;
 
-    public function __construct($value) {
+    public function __construct($value)
+    {
         $this->value = $value;
     }
 
-    public function build($container) {
+    public function build($container)
+    {
         return $this->value;
     }
 }

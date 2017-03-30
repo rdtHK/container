@@ -21,6 +21,7 @@ namespace Rdthk\DependencyInjection;
 /**
  *
  */
-interface Scope {
+interface Scope
+{
     public function getInstance($container);
 }

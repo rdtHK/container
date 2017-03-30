@@ -21,16 +21,19 @@ namespace Rdthk\DependencyInjection;
 /**
  *
  */
-class SingletonScope implements Scope {
+class SingletonScope implements Scope
+{
 
     private static $instances = [];
 
-    public function __construct($name, $binding) {
+    public function __construct($name, $binding)
+    {
         $this->name = $name;
         $this->binding = $binding;
     }
 
-    public function getInstance($container) {
+    public function getInstance($container)
+    {
         if (!array_key_exists($this->name, self::$instances)) {
             self::$instances[$this->name] = $this->binding->build($container);
         }
