@@ -26,7 +26,7 @@ class Container
 {
 
     private $_builders = [];
-    private $_values = [];
+    private $cache = [];
     private $bindings = [];
 
     /**
@@ -86,7 +86,6 @@ class Container
     public function bindValue($name, $resource)
     {
         $this->validateName($name);
-        // $this->_values[$name] = $resource;
         $this->bindings[$name] = new ValueBinding($resource);
         return $this;
     }
@@ -101,14 +100,14 @@ class Container
     public function get($name)
     {
         if (array_key_exists($name, $this->_builders)) {
-            $this->_values[$name] = call_user_func(
+            $this->cache[$name] = call_user_func(
                 $this->_builders[$name], $this
             );
             unset($this->_builders[$name]);
         }
 
-        if (array_key_exists($name, $this->_values)) {
-            return $this->_values[$name];
+        if (array_key_exists($name, $this->cache)) {
+            return $this->cache[$name];
         }
 
         if (!array_key_exists($name, $this->bindings)) {
