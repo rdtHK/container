@@ -25,6 +25,8 @@ use Rdthk\DependencyInjection\DependentScope;
 
 use Rdthk\DependencyInjection\Tests\util\DummyInterface;
 use Rdthk\DependencyInjection\Tests\util\DummyClass;
+use Rdthk\DependencyInjection\Tests\util\DummyClassInject;
+use Rdthk\DependencyInjection\Tests\util\DummyClassFailInject;
 
 class ContainerTest extends TestCase
 {
@@ -141,6 +143,28 @@ class ContainerTest extends TestCase
         $this->container->bind(DummyInterface::class, DummyClass::class);
         $obj = $this->container->get(DummyInterface::class);
         $this->assertEquals('hello', $obj->returnValue());
+    }
+
+    public function testBindClassWithConstructorInjection()
+    {
+        $this->container->bind(DummyInterface::class, DummyClass::class);
+        $this->container->bind('foo', DummyClassInject::class);
+        $obj = $this->container->get('foo');
+        $this->assertTrue($obj->val instanceof DummyClass);
+    }
+
+    /**
+     * Ensures the container throws an exception in case
+     * there's a missing parameter type hint.
+     *
+     * @expectedException \TypeError
+     * @expectedExceptionMessage is missing a type hint
+     */
+    public function testBindClassWithConstructorInjectionMissingATypeHint()
+    {
+        $this->container->bind(DummyInterface::class, DummyClass::class);
+        $this->container->bind('foo', DummyClassFailInject::class);
+        $this->container->get('foo');
     }
 
     /**

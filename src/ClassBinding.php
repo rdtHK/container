@@ -33,6 +33,27 @@ class ClassBinding implements Binding
     public function build($container)
     {
         $c = $this->class;
-        return new $c();
+        $ref = new \ReflectionClass($this->class);
+        $con = $ref->getConstructor();
+
+        if ($con === null) {
+            return new $c();
+        }
+
+        $args = [];
+
+        foreach ($con->getParameters() as $parameter) {
+            if (!$parameter->hasType()) {
+                $pName = $parameter->getName();
+                throw new \TypeError(
+                    "Constructor parameter '{$pName}' " .
+                    "from '{$c}' is missing a type hint."
+                );
+            }
+
+            $args[] = $container->get((string) $parameter->getType());
+        }
+
+        return $ref->newInstanceArgs($args);
     }
 }
