@@ -153,6 +153,26 @@ class ContainerTest extends TestCase
         $this->assertTrue($obj->val instanceof DummyClass);
     }
 
+    public function testClassInstantiationForUnboundClasses()
+    {
+        $obj = $this->container->get(DummyClass::class);
+        $this->assertTrue($obj instanceof DummyClass);
+    }
+
+    public function testUnboundClassConstructorInjection()
+    {
+        $this->container->bind(DummyInterface::class, DummyClass::class);
+        $obj = $this->container->get(DummyClassInject::class);
+        $this->assertTrue($obj->val instanceof DummyClass);
+    }
+
+    public function testUnboundClassIsNotSingleton()
+    {
+        $objA = $this->container->get(DummyClass::class);
+        $objB = $this->container->get(DummyClass::class);
+        $this->assertNotSame($objA, $objB);
+    }
+
     /**
      * Ensures the container throws an exception in case
      * there's a missing parameter type hint.

@@ -118,11 +118,16 @@ class Container
      */
     public function get($name)
     {
-        if (!array_key_exists($name, $this->bindings)) {
-            throw new \InvalidArgumentException("Undeclared resource '$name'.");
+        if (array_key_exists($name, $this->bindings)) {
+            return $this->bindings[$name]->getInstance($this);
         }
 
-        return $this->bindings[$name]->getInstance($this);
+        if (class_exists($name)) {
+            $binding = new ClassBinding($name);
+            return $binding->build($this);
+        }
+
+        throw new \InvalidArgumentException("Undeclared resource '$name'.");
     }
 
     /**
