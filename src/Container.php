@@ -26,6 +26,7 @@ class Container
 {
 
     private $bindings = [];
+    private $defaultScope = DependentScope::class;
 
     /**
      * Stores a new resource in the container.
@@ -73,7 +74,7 @@ class Container
             );
         }
 
-        $this->bindings[$name] = new $scope($name, new FactoryBinding($resource));
+        $this->bindings[$name] = new $scope(new FactoryBinding($resource));
         return $this;
     }
 
@@ -89,7 +90,7 @@ class Container
     public function bindValue($name, $resource, $scope=DependentScope::class)
     {
         $this->validateName($name);
-        $this->bindings[$name] = new $scope($name, new ValueBinding($resource));
+        $this->bindings[$name] = new $scope(new ValueBinding($resource));
         return $this;
     }
 
@@ -105,8 +106,25 @@ class Container
     public function bindClass($name, $resource, $scope=DependentScope::class)
     {
         $this->validateName($name);
-        $this->bindings[$name] = new $scope($name, new ClassBinding($resource));
+        $this->bindings[$name] = new $scope(new ClassBinding($resource));
         return $this;
+    }
+
+    /**
+     * @param  string $scope The scope class.
+     */
+    public function setDefaultScope($scope)
+    {
+        if (!class_exists($scope)) {
+            throw new \InvalidArgumentException("Scope class '{$scope}' does not exist.");
+        }
+
+        $this->defaultScope = $scope;
+    }
+
+    public function getDefaultScope($scope)
+    {
+        return $this->defaultScope;
     }
 
     /**
@@ -123,8 +141,9 @@ class Container
         }
 
         if (class_exists($name)) {
-            $binding = new ClassBinding($name);
-            return $binding->build($this);
+            $scope = $this->defaultScope;
+            $scopeObj = new $scope(new ClassBinding($name));
+            return $scopeObj->getInstance($this);
         }
 
         throw new \InvalidArgumentException("Undeclared resource '$name'.");

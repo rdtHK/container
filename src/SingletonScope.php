@@ -26,9 +26,9 @@ class SingletonScope implements Scope
 
     private static $instances = [];
 
-    public function __construct($name, $binding)
+    public function __construct($binding)
     {
-        $this->name = $name;
+        $this->name = spl_object_hash($binding);
         $this->binding = $binding;
     }
 

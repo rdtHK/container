@@ -24,7 +24,7 @@ namespace Rdthk\DependencyInjection;
 class DependentScope implements Scope
 {
 
-    public function __construct($name, $binding)
+    public function __construct($binding)
     {
         $this->binding = $binding;
     }

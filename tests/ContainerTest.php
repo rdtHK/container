@@ -166,11 +166,22 @@ class ContainerTest extends TestCase
         $this->assertTrue($obj->val instanceof DummyClass);
     }
 
+    /**
+     * Default 'defaultScope' is Dependent
+     */
     public function testUnboundClassIsNotSingleton()
     {
         $objA = $this->container->get(DummyClass::class);
         $objB = $this->container->get(DummyClass::class);
         $this->assertNotSame($objA, $objB);
+    }
+
+    public function testSetDefaultScope()
+    {
+        $this->container->setDefaultScope(SingletonScope::class);
+        $a = $this->container->get(DummyClass::class);
+        $b = $this->container->get(DummyClass::class);
+        $this->assertSame($a, $b);
     }
 
     /**
